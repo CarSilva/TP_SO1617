@@ -26,6 +26,10 @@ int main (int argc, char** argv){
 	int n;
 
 	while(n = readln(0,buf,1024)){
+		if(buf[0] == ':'){
+			printf("ERRO\n");
+			_exit(1);
+		}
 		aux = (char *) realloc(aux, strlen(buf) + strlen(argv[1])+1);
 		buf[n] = '\0';
 		strcat(aux,buf);
