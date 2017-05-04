@@ -12,30 +12,32 @@ ssize_t readln(int fildes, char *buf, size_t nbyte){
 	return i;
 }
 
-
 int main (int argc, char** argv){
 	char *buf = (char *) malloc(1024);
+
+	if(!argv[1]) {
+		printf("ERRO\n");
+		_exit(1);
+	}
+
 	char *aux = (char *) malloc(strlen(buf) + strlen(argv[1])+1);
 	
-	//aux[0]='\0';
-	
-	int n = 1,a;
-	int sn;
-	
 
-	while((a = readln(0,buf,1024))>0){
+	int n;
+
+	while(n = readln(0,buf,1024)){
 		aux = (char *) realloc(aux, strlen(buf) + strlen(argv[1])+1);
+		buf[n] = '\0';
 		strcat(aux,buf);
-		aux[a]='\0';
 		strcat(aux,":");
 		strcat(aux,argv[1]);
-		printf("%s",aux);
-		
+		printf("%s\n",aux);
+		aux[0] = '\0';
 	}
 
 	free(aux);
 	free(buf);
 	
-	return 0;
+	_exit(0);
 	
 }
