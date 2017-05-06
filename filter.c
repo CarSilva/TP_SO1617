@@ -34,29 +34,29 @@ int main(int argc, char const *argv[]) {
 				tok = strtok(NULL, ":");	
 			}
 			
-			if(strcmp(argv[2], ">") == 0)
+			if(!strcmp(argv[2], ">"))
 					if(min > max) {
 						printf("%s", buf);
 					}
 					
-			if(strcmp(argv[2], "<") == 0)
+			if(!strcmp(argv[2], "<"))
 					if(min < max) {
 						printf("%s", buf);
 					}
-			if(strcmp(argv[2], "=") == 0)
+			if(!strcmp(argv[2], "="))
 					if(min == max) {
 						printf("%s", buf);
 					}
-			if(strcmp(argv[2],"<=") == 0)
+			if(!strcmp(argv[2],"<="))
 					if(min <= max){
 						printf("%s", buf);
 					}
-			if(strcmp(argv[2],">=") == 0) 
+			if(!strcmp(argv[2],">=")) 
 					if(min >= max){
 						printf("%s", buf);
 					}
 
-			if(strcmp(argv[2], "!=") == 0)
+			if(!strcmp(argv[2], "!="))
 					if(min != max){
 						printf("%s", buf);
 					}
