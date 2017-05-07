@@ -23,21 +23,21 @@ int containsDol(char *tok) {
 
 int main(int argc, char *argv[]) {
 	char *tmp, *tok, *buf = malloc(1024);
-	int i, n, column, execN;
+	int i, j, n, column[argc-2], execN[argc-2];
 	while((n = readln(0, buf, 1024)) > 1){
 		if(fork() == 0){
 			buf[strlen(buf) - 1] = '\0';
 			tmp = strdup(buf);
-			for(i = 0; i < argc; i++){
+			for(i = 0,j=0; i < argc; i++){
 				if(containsDol(argv[i])){
-					execN = i;
-					column = argv[i][1] - '0';
+					execN[j] = i;
+					column[j++] = argv[i][1] - '0';
 				}
 			}
 			tok = strtok(tmp, ":");
-			for(i = 1; tok; i++){
-				if(i == column){
-					strcpy(argv[execN], tok);
+			for(i = 1,j=0; tok; i++){
+				if(i == column[j]){
+					strcpy(argv[execN[j++]], tok);
 				}
 				tok = strtok(NULL,":");
 			}
