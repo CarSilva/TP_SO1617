@@ -21,9 +21,20 @@ int containsDol(char *tok) {
 	return r;
 }
 
+svoid put(char *buf, int n){
+	int len = strlen(buf);
+	char *aux2, aux[2];
+	aux2 = strdup(buf);
+	snprintf(aux, len+2, ":%d", n);
+	aux2[len-1] = '\0';
+	strcat(aux2, aux);
+	printf("%s\n",aux2 );
+}
+
+
 int main(int argc, char *argv[]) {
 	char *tmp, *tok, *buf = malloc(1024);
-	int i, j, n, column[argc-2], execN[argc-2];
+	int i, j, n, status, exit, nrChilds = 0, column[argc-2], execN[argc-2];
 	while((n = readln(0, buf, 1024)) > 1){
 		if(fork() == 0){
 			buf[strlen(buf) - 1] = '\0';
@@ -47,7 +58,11 @@ int main(int argc, char *argv[]) {
 			}
 			_exit(0);
 		}
+		wait(&status);
+		exit = WEXITSTATUS(status);
+		put(buf, exit);
 	}
+
 	return 0;
 }
 
