@@ -2,15 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include "readln.c"
+#include "put.c"
 
-ssize_t readln(int fildes, char *buf, size_t nbyte){
-	int i = 0;
-	int rd;
-	while((i<nbyte) && (rd=read(fildes,buf+i,1)) > 0 && *(buf+i) != '\n'){
-		i++;
-	}
-	return ++i;
-}
 
 
 int main(int argc, char const *argv[]) {
@@ -20,7 +14,7 @@ int main(int argc, char const *argv[]) {
 	while((n = readln(0, buf, 1024)) > 1) {
 			aux = strdup(buf);
 			if(aux[0] == ':'){
-				printf("ERRO\n");
+				write(0, "ERROR\n", 6);
 				_exit(1);
 			}
 			tok = strtok(aux, ":");
@@ -36,29 +30,29 @@ int main(int argc, char const *argv[]) {
 			
 			if(!strcmp(argv[2], ">"))
 					if(min > max) {
-						printf("%s", buf);
+						write(0, buf, n);
 					}
 					
 			if(!strcmp(argv[2], "<"))
 					if(min < max) {
-						printf("%s", buf);
+						write(0, buf, n);
 					}
 			if(!strcmp(argv[2], "="))
 					if(min == max) {
-						printf("%s", buf);
+						write(0, buf, n);
 					}
 			if(!strcmp(argv[2],"<="))
 					if(min <= max){
-						printf("%s", buf);
+						write(0, buf, n);
 					}
 			if(!strcmp(argv[2],">=")) 
 					if(min >= max){
-						printf("%s", buf);
+						write(0, buf, n);
 					}
 
 			if(!strcmp(argv[2], "!="))
 					if(min != max){
-						printf("%s", buf);
+						write(0, buf, n);
 					}
 	}
 	return 0;

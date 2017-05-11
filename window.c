@@ -2,25 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-
-ssize_t readln(int fildes, char *buf, size_t nbyte){
-	int i = 0;
-	int rd;
-	while((i<nbyte) && (rd=read(fildes,buf+i,1)) > 0 && *(buf+i) != '\n'){
-		i++;
-	}
-	return ++i;
-}
-
-void put(char *buf, int n){
-	int len = strlen(buf);
-	char *aux2, aux[2];
-	aux2 = strdup(buf);
-	snprintf(aux, len+2, ":%d", n);
-	aux2[len-1] = '\0';
-	strcat(aux2, aux);
-	printf("%s\n",aux2 );
-}
+#include "readln.c"
+#include "put.c"
 
 
 int main(int argc, char const *argv[]) {
