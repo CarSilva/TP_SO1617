@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <string.h>
+#include <sys/wait.h>
 #include "put.c"
 #include "readln.c"
 
@@ -19,7 +20,7 @@ int containsDol(char *tok) {
 
 int main(int argc, char *argv[]) {
 	char *tmp, *tok, *buf = malloc(PIPE_BUF);
-	int i, j, n, status, exit, nrChilds = 0, column[argc-2], execN[argc-2];
+	int i, j, n, status, exit, nrChilds = 0, column[argc-1], execN[argc-1];
 	while((n = readln(0, buf, PIPE_BUF)) > 1){
 		if(fork() == 0){
 			buf[strlen(buf) - 1] = '\0';
