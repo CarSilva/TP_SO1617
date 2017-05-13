@@ -12,5 +12,6 @@ void put(char *buf, int n){
 	aux2 = strdup(buf);
 	aux2[len-1] = '\0';
 	snprintf(aux, NR, "%s:%d\n", aux2, n);
-	write(0, aux, strlen(aux));
+	write(1, aux, strlen(aux));
+	write(1, "\n", 1);
 }

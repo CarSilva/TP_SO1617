@@ -11,7 +11,7 @@ int main (int argc, char** argv){
 	char *buf = (char *) malloc(1024);
 
 	if(!argv[1]) {
-		write(0, "ERROR\n", 6);
+		write(1, "ERROR\n", 6);
 		_exit(1);
 	}
 
@@ -20,14 +20,16 @@ int main (int argc, char** argv){
 	int n;
 
 	while((n = readln(0,buf,1024))>1){
+		printf("olaaaa\n");
 		if(buf[0] == ':'){
-			write(0, "ERROR\n", 6);
+			write(1, "ERROR\n", 6);
 			_exit(1);
 		}
 		aux = (char *) realloc(aux, strlen(buf) + strlen(argv[1])+1);
 		buf[n-1] = '\0';
 		snprintf(aux, NR, "%s:%s\n",buf,argv[1]);
-		write(0, aux, strlen(aux));
+		write(1, aux, strlen(aux));
+		write(1, "\n", 1);
 	}
 
 	free(aux);
