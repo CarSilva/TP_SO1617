@@ -5,6 +5,8 @@
 #include <sys/wait.h>
 #include "readln.c"
 
+#define GRAPH_SIZE 30
+
 typedef struct node {
 	int id, size_dest;
 	char **cmds;
@@ -25,13 +27,13 @@ void traverse(Node *graph, int id, int *pipefd);
 
 
 int main(int argc, char const *argv[]) {
-	int n;
+	int n = 2;
 	char *buffer = malloc(1024);
-	Node *graph = malloc(sizeof(Node*)*20);
+	Node *graph = malloc(sizeof(Node*)*GRAPH_SIZE);
 
-	while((n = readln(0,buffer, 1024)) > 1) {
+	while((n = readln(0, buffer, 1024)) > 1) {
 		buffer[n-1] = '\0';
-		
+
 		update_graph(graph, buffer);
 	}
 	return 0;
@@ -92,7 +94,7 @@ void update_graph(Node *graph, char *buffer){
 				tok = strtok(NULL, " ");
 			}
 			args[i] = NULL;
-
+		
 			inject(graph, id, args);
 		} else
 
@@ -142,7 +144,7 @@ void connect(Node *graph, int id, int *ids, int size) {
 
 		if (!flag){
 			pipe(pipefd);
-			//printf("%d %d\n", pipefd[0], pipefd[1]);
+
 			graph[id-1]->destination_ids[graph[id-1]->size_dest] = ids[i];
 			graph[id-1]->source_pfd[graph[id-1]->size_dest] = pipefd[0];
 			graph[id-1]->destination_pfd[graph[id-1]->size_dest++] = pipefd[1];
@@ -177,67 +179,83 @@ void disconnect(Node *graph, int id1, int id2) {
 }
 
 void inject(Node *graph, int id, char **cmds) {
-	int pipefd[2];
-	int i;
-
-	pipe(pipefd);
+	int i, n, pp_a, pp_s[2], pp[2];
+	pipe(pp_s);
 
 	if (fork() == 0) {
-		close(pipefd[0]);
-		dup2(pipefd[1], 1);
-		close(pipefd[1]);
+		close(pp_s[0]);
+		dup2(pp_s[1], 1);
+		close(pp_s[1]);
 
 		execvp(cmds[0], cmds);
 		perror("Exec");
 		exit(-1);
 
 	} else {
-		
-		traverse(graph, id, pipefd);
-	} 
 
-	close(pipefd[1]);
-	close(pipefd[0]);
+		traverse(graph, id, pp_s);
 
-	wait(NULL);
-	wait(NULL);
+	}
 }
 
-void traverse(Node *graph, int id, int *pipefd){
-	int i;
+void traverse(Node *graph, int id, int *pp_s){
+	
+	int i, n, pp[2], pp_a;
+	char *buffer = malloc(1024);
 
-	for (i = 0; i < graph[id-1]->size_dest; i++){
+		close(pp_s[1]);
+		pp_a = pp_s[0];
 
-		if (fork() == 0){
-			close(pipefd[1]);
-			dup2(pipefd[0], 0);
-			close(pipefd[0]);
+		pipe(pp);
 
-			close(graph[id-1]->source_pfd[i]);
-			dup2(graph[id-1]->destination_pfd[i], 1);
-			close(graph[id-1]->destination_pfd[i]);
+		if(fork() == 0) {
+			dup2(pp_a, 0);
+			close(pp_a);
+			
+			//if(graph[id-1]->size_dest > 0){
+			close(pp[0]);
+			dup2(pp[1], 1);
+			close(pp[1]);
+			//}
 
 			execvp(graph[id-1]->cmds[0], graph[id-1]->cmds);
 			perror("Exec");
 			exit(-1);
-
-		} else
-
-		if (fork() == 0){
-			close(graph[id-1]->destination_pfd[i]);
-			dup2(graph[id-1]->source_pfd[i], 0);
-			close(graph[id-1]->source_pfd[i]);
-
-			int pipeaux[2] = {graph[id-1]->source_pfd[i], graph[id-1]->destination_pfd[i]};
-
-			traverse(graph, graph[id-1]->destination_ids[i], pipeaux);
 		}
-	}
+		close(pp[1]);
+		close(pp_a);
 
-	for (i = 0; i < graph[id-1]->size_dest; i++)
-		wait(NULL);
+
+	while ((n = readln(pp[0], buffer, 1024)) > 1){
+			for (i = 0; i < graph[id-1]->size_dest; i++){
+				write(graph[id-1]->destination_pfd[i], buffer, n);
+			}
+		}
+
+		close(pp[0]);
+
+		for (i = 0; i < graph[id-1]->size_dest; i++) {
+			int auxpp[2] = {graph[id-1]->source_pfd[i],graph[id-1]->destination_pfd[i]};
+			traverse(graph, graph[id-1]->destination_ids[i], auxpp);
+
+		}
+		for (i = 0; i < graph[id-1]->size_dest; i++)
+			wait(NULL);
+
 }
 
 void remove_node(Node *graph, int id) {
+	int i, j, flag = 0;
+
+	for (i = 0; i < GRAPH_SIZE; i++)
+		if (graph[i])
+			for (j = 0; j < graph[i]->size_dest; j++)
+				if (graph[i]->destination_ids[j] == id){
+					disconnect(graph, i+1, id);
+					connect(graph, i+1, graph[id-1]->destination_ids, graph[id-1]->size_dest);
+				}
+
+	graph[id-1] = NULL;
+
 
 }

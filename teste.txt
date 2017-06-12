@@ -1,0 +1,7 @@
+node 1 uniq
+node 2 wc
+node 3 tee log.txt
+connect 1 2
+connect 3 2
+inject 1 ls
+inject 3 ls

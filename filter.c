@@ -30,34 +30,28 @@ int main(int argc, char const *argv[]) {
 			if(!strcmp(argv[2], ">"))
 					if(min > max) {
 							write(1, buf, n);
-							write(1, "\n", 1);
 					}
 					
 			if(!strcmp(argv[2], "<"))
 					if(min < max) {
 							write(1, buf, n);
-							write(1, "\n", 1);
 					}
 			if(!strcmp(argv[2], "="))
 					if(min == max) {
 							write(1, buf, n);
-							write(1, "\n", 1);
 					}
 			if(!strcmp(argv[2],"<="))
 					if(min <= max){
 							write(1, buf, n);
-							write(1, "\n", 1);
 					}
 			if(!strcmp(argv[2],">=")) 
 					if(min >= max){
 							write(1, buf, n);
-							write(1, "\n", 1);
 					}
 
 			if(!strcmp(argv[2], "!="))
 					if(min != max){
 							write(1, buf, n);
-							write(1, "\n", 1);
 					}
 	}
 	return 0;

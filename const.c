@@ -20,7 +20,6 @@ int main (int argc, char** argv){
 	int n;
 
 	while((n = readln(0,buf,1024))>1){
-		printf("olaaaa\n");
 		if(buf[0] == ':'){
 			write(1, "ERROR\n", 6);
 			_exit(1);
@@ -29,7 +28,6 @@ int main (int argc, char** argv){
 		buf[n-1] = '\0';
 		snprintf(aux, NR, "%s:%s\n",buf,argv[1]);
 		write(1, aux, strlen(aux));
-		write(1, "\n", 1);
 	}
 
 	free(aux);

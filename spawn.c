@@ -21,7 +21,9 @@ int containsDol(char *tok) {
 int main(int argc, char *argv[]) {
 	char *tmp, *tok, *buf = malloc(PIPE_BUF);
 	int i, j, n, status, exit, nrChilds = 0, column[argc-1], execN[argc-1];
+	int pfd[2];
 	while((n = readln(0, buf, PIPE_BUF)) > 1){
+		pipe(pfd);
 		if(fork() == 0){
 			buf[strlen(buf) - 1] = '\0';
 			tmp = strdup(buf);
@@ -36,11 +38,15 @@ int main(int argc, char *argv[]) {
 				if(i == column[j]){
 					strcpy(argv[execN[j++]], tok);
 				}
-			tok = strtok(NULL,":");
+				tok = strtok(NULL,":");
+			}
+			close(pfd[0]);
+			dup2(pfd[1], 1);
+			close(pfd[1]);
 			execvp(argv[1], argv + 1);
 			perror("Command failed");
 			_exit(-1);
-			}
+
 		}
 		wait(&status);
 		exit = WEXITSTATUS(status);
